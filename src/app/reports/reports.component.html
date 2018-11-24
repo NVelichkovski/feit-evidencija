@@ -1,0 +1,118 @@
+
+<div class="container" style="padding: 50px">
+    <form class="form-group" (ngSubmit)="generateReport(reportsForm.value)" #reportsForm="ngForm">
+        <div class="row">
+            <div class="col" *ngIf="this._auth.currUser.access === 'prodekan'">
+                <label for="nastavnik">Наставник</label>
+                    <select name="nastavnik" [ngModel]="nastavnik" id="nastavnik" (change)="updateSubject(reportsForm.value)" class="custom-select" required>
+                        <option selected ></option>
+                        <option *ngFor="let professor of _professors" [attr.value]="professor.id">{{professor.firstName}} {{professor.lastName}}</option>
+                    </select>
+            </div>
+            <div class="col">
+            <label for="predmet">Предмет</label>
+            <select name="predmet" [ngModel]="predmet" id="predmet" (change)="updateProfessor(reportsForm.value)" class="custom-select" required>
+                    <option selected ></option>
+                    <option [attr.value]="-1" >Сите предмети</option>
+                    <option *ngFor="let subject of _subjects" [attr.value]="subject.id">{{subject.name}}</option>
+            </select>
+        </div>
+        </div>
+        <div class="row">
+                <div class="col">
+                <label for="semester">Семестер</label>
+                <select [ngModel]="semester" name="semester" id="semester" class="custom-select" required>
+                        <option selected ></option>
+                        <option [attr.value]="-1" >Сите семестри</option>
+                        <option *ngFor="let semester of _semesters" [attr.value]="semester.id">{{semester.name}}</option>
+                </select>
+                </div>
+                <div class="col">
+                <label for="nedela">Недела</label>
+                <select [ngModel]="nedela" name="nedela" id="nedela" class="custom-select" required>
+                    <option [attr.value]="-1" >Сите недели</option>
+                    <option [attr.value]="1">1</option>
+                    <option [attr.value]="2">2</option>
+                    <option [attr.value]="3">3</option>
+                    <option [attr.value]="4">4</option>
+                    <option [attr.value]="5">5</option>
+                    <option [attr.value]="6">6</option>
+                    <option [attr.value]="7">7</option>
+                    <option [attr.value]="8">8</option>
+                    <option [attr.value]="9">9</option>
+                    <option [attr.value]="10">10</option>
+                    <option [attr.value]="11">11</option>
+                    <option [attr.value]="12">12</option>
+                    <option [attr.value]="13">13</option>
+                    <option [attr.value]="14">14</option>
+                    <option [attr.value]="15">15</option>
+                </select>
+                </div>
+        </div>
+
+        <div class="row" style="padding-top: 10px">
+            <div class="col">
+            <span class="d-inline-block" tabindex="0"  [attr.data-toggle]="reportsForm.invalid? 'tooltip': ''" [attr.data-placement]="reportsForm.invalid?'bottom':''" [attr.title]="reportsForm.invalid?'Пополнете ги сите податоци':''">
+                <button class="btn btn-info" [ngClass]="{'not-allowed': reportsForm.invalid}" [disabled]="reportsForm.invalid"  type="sbmit" >Генерирај Извештај</button>
+            </span>    
+        </div>
+        </div>
+    </form>          
+</div>
+
+<div class="container text-dark">
+    <div class="card">
+        <div *ngIf="this.noReportsFeedback" class="card-header text-center">
+            Внесените параметри не дадоа никакви резултати
+        </div>
+    </div>    
+
+    <table class="table table-hover" *ngIf="this.reportsData.length !== 0" style="cursor: crosshair;">
+        <thead>
+            <th >Предмет</th>
+            <th>Професор</th>
+            <th>Дата</th>
+            <th>Просторија</th>
+            <th>Статус</th>
+            <th>Прикажи студенти</th>
+        </thead>
+
+        <tbody *ngFor="let subject of reportsData">
+            <tr >
+                <td>{{subject.name}}</td>
+                <td>{{subject.professor}}</td>
+                <td>{{subject.date}}</td>
+                <td>{{subject.room}}</td>
+                
+                <td *ngIf="subject?.status">{{subject.status}} </td>
+                <td *ngIf="!subject?.status" colspan="2">Наставата не е одржана </td>
+
+                <td *ngIf="subject.status && subject.students.length">
+                    <a class="pointable" data-toggle="collapse" [attr.href]="'#students' + subject.date" role="button" aria-expanded="false" [attr.aria-controls]="'#students' + subject.date">
+                        <i class="fa fa-caret-down fa-2x"></i>
+                    </a>
+                </td>
+            </tr>
+            <tr *ngIf="subject.status && subject.students.length" class="collapse" [attr.id]="'students' + subject.date">
+                <td colspan="5">
+                    <table class="table table-sm table-hover" style="background-color: transparent">
+                        <th >Студент</th>
+                        <th>Индекс</th>
+                        <th></th>
+                        <tr *ngFor = "let student of subject.students" [ngClass]="{'table-danger': !student.recorded}">
+                        <td>{{student.name}}</td>
+                        <td>{{student.index}}</td>
+                        <td style="align-items: center">
+                                <i *ngIf="student.recorded" class="fa fa-check-circle" style="color: green"></i>
+                                <i *ngIf="!student.recorded" class="fa fa-minus-circle" style="color: firebrick"></i>
+                        </td>
+                        </tr>
+                    </table>
+                </td>
+                <th>
+                    Присутни: {{getStudents(subject)}}
+                </th>
+            </tr>
+        </tbody>
+    </table>
+</div>

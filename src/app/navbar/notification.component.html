@@ -1,0 +1,116 @@
+
+<div id="accordion" class="container-fluid h-100"  >
+    
+        <div #notificationElement class="collapse show" *ngIf="!notifications.length"  style="padding: 10px">
+                <div class="card">
+                    <div class="card-header text-center" >
+                        <h5 class="mb-0 ">Немате нови пораки</h5>
+                    </div>
+                </div>
+        </div>
+
+        <div *ngFor="let notification of notifications" #notificationElement class="collapse show" style="padding: 10px">
+            <div class="card">
+            <div class="card-header" [attr.id]="'heading' + notification.id">
+                <div *ngIf="notification.submited==='yes'" (click)="removeNotification(notificationElement, notification)" ><i class="fa fa-times pointable" style="float: right; font-size: 20px; color: firebrick"></i></div>
+                <h5 class="mb-0">
+                    <table>
+                    <tr>
+                        <td style="width: 137px">
+                    <div class="btn btn-link" data-toggle="collapse" [attr.data-target]="'#collapse' + notification.id" aria-expanded="true" [attr.aria-controls]="'collapse' + notification.id" style="text-align: left; ">
+                            <strong *ngIf="notification.status == 'неодржана' || notification.status == 'неодржанаТ'">Неодржана</strong>
+                            <strong *ngIf="notification.status == 'одржана' || notification.status == 'одржанаТ'">Одржана</strong>
+                            <strong *ngIf="notification.status == 'корегирана' || notification.status == 'некорегирана'">некорегирана</strong>
+                    </div>
+                </td>
+                <td >
+                <div class="btn btn-link" data-toggle="collapse" [attr.data-target]="'#collapse' + notification.id" aria-expanded="true" [attr.aria-controls]="'collapse' + notification.id" style="text-align: left; ">
+                    {{notification.date| date: 'short'}}<br>{{notification.subject | slice: 0: 30}}
+                </div>
+                </td>
+                </tr>
+            </table>
+                </h5>
+            </div>
+            
+            <div [attr.id]="'collapse'+notification.id" class="collapse hide" [attr.aria-labelledby]="'heading'+ notification.id" data-parent="#accordion">
+                <div *ngIf="notification.status != 'некорегирана'" class="card-body" style="word-wrap: break-word;">
+                            <form #notificationForm="ngForm" (ngSubmit)="sendExcuses(notification, notificationForm.value)">
+                                        {{notification.date| date: 'short'}}
+                                        <br>
+                                        <font>{{notification.subject}}</font>   
+                                        <br> 
+                                        <strong *ngIf="notification.status == 'неодржана' || notification.status == 'неодржанаТ'">Неодржана</strong>
+                                        <strong *ngIf="notification.status == 'одржана' || notification.status == 'одржанаТ'">Одржана</strong>
+                                        <strong *ngIf="notification.status == 'корегирана' || notification.status == 'некорегирана'">некорегирана</strong>                               
+                                <div style="padding: 20px">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <button type="submit" *ngIf="notification.submited ==='no'" class="btn btn-info"  [disabled]="notification.submited!=='no'" >
+                                                    <span >Поднеси:</span>
+                                                </button>
+
+                                                <button *ngIf="notification.submited === 'yes'"  class="btn btn-info" type="button" (click)="notification.submited = 'no'">
+                                                        <i class="fa fa-edit" ></i>
+                                                </button>
+
+                                                <button *ngIf="notification.submited !== 'no'" [disabled]="true" class="btn btn-dark" type="button">
+                                                        <i  class="fas fa-check" *ngIf="notification.submited === 'yes'"  style=" text-shadow: -7px 8px 2px #c54040, -3px 5px #c74b16; color: rgb(29, 165, 29) "></i>
+                                                </button>
+                                                    
+                                            </div>
+                                            <input type="text" (ngModel)="inputData" name="inputData" [disabled]="notification.submited!=='no'" class="form-control" [attr.placeholder]="notification.status == 'неодржана' ? 'Причина за неодржаност' : 'Тема'" aria-label="" aria-describedby="basic-addon1">
+                                        </div>
+                                </div> 
+                             </form>
+                </div>
+                <div *ngIf="notification.status == 'некорегирана'" class="card-body" style="word-wrap: break-word;">
+                    <form #notificationForm="ngForm"  (ngSubmit)="sendExcuses(notification, notificationForm.value)">
+                                {{notification.date| date: 'short'}}
+                                <br>
+                                <font>Предмет по распоред: {{notification.subject}}</font>
+                                <br> 
+                                <strong>{{notification.status}}</strong>
+                                <div style="padding: 20px">
+                                <span>
+                                    <label for="zamenet">Замени со: </label>
+                                    <Select id="zamenet" name="zamenet_predmet" style="width: 25%" class="custom-select">
+                                        <option *ngFor="let subject of getOthersSubjects(notification)" [attr.value]="subject.id">{{subject.name}}</option>
+                                    </Select>
+                                </span>
+                                <span style="padding-left: 20px">
+                                    <label for="blok">Блок: </label>
+                                    <Select id="blok" name="blok" style="width: 10%" class="custom-select">
+                                        <option value="1" >1</option>
+                                        <option value="2" >2</option>
+                                        <option value="3" >3</option>
+                                        <option value="4" >4</option>
+                                        <option value="5" >5</option>
+                                        <option value="6" >6</option>
+                                        <option value="7" >7</option>
+                                    </Select>
+                                </span>
+                            </div>
+                        <div >
+                                <div class="input-group mb-3" style="padding: 20px">
+                                    <div class="input-group-prepend">
+                                        <button type="submit" *ngIf="notification.submited==='no'"  class="btn btn-info"  [disabled]="notification.submited!=='no'" >
+                                            <span >Поднеси:</span>
+                                        </button>
+                                        <button *ngIf="notification.submited==='yes'"  class="btn btn-info" type="button">
+                                                <i class="fa fa-edit" ></i>
+                                        </button>
+                                        <button *ngIf="notification.submited==='yes'" [disabled]="true" class="btn btn-dark" type="button">
+                                                <i  class="fas fa-check "   style=" text-shadow: -7px 8px 2px #c54040, -3px 5px #c74b16; color: rgb(29, 165, 29) "></i>
+                                        </button>
+                                            
+                                    </div>
+                                    <input type="text" #excuse (ngModel)="tema" name="inputData" [disabled]="notification.submited!=='no'" class="form-control" [attr.placeholder]="notification.status == 'неодржана' ? 'Причина за неодржаност' : 'Тема'" aria-label="" aria-describedby="basic-addon1">
+                                </div>
+                        </div> 
+            </form>
+    </div>
+            </div>
+            </div>
+    </div>
+</div>

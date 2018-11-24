@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "http://localhost:80/feit-evidencija-api/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

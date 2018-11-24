@@ -1,0 +1,50 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top" style="position: sticky; top: 0; z-index: 30; border-bottom: lightgray .1px solid; width: 100%" >
+
+  <div class="container">
+    <a class="navbar-brand" [routerLink]="['stream/']">
+      <img src="/src/assets/logo.png  " alt="logo" class="img-fluid" width="60px">
+    </a>  
+      <h3 class="text-center" id="logo-text" [routerLink]="['stream/']">FEIT</h3>
+    <button *ngIf="!!this._auth.currUser" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarButtons" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+    <span  *ngIf="!!this._auth.currUser" class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarButtons">
+
+    <div class="navbar-nav mr-auto btn-group btn-group-toggle"  style="padding-left: 50px">
+        <button *ngIf="!!this._auth.currUser" [routerLink]="['/stream']"  class="btn btn-info" [ngClass]="{'active': (_router.url==='/stream')}">Следење во живо</button>
+        <button *ngIf="!!this._auth.currUser" [routerLink]="['/calendar']" class="btn btn-info" [ngClass]="{'active':(_router.url=='/calendar')}">Календар</button>
+        <button *ngIf="!!this._auth.currUser && this._auth.currUser?.access !== 'student'"  [routerLink]="['/reports']" class="btn btn-info" [ngClass]="{'active': (_router.url=='/reports')}"> Извештаи</button>
+    </div>
+    
+    <div class="navbar-nav">
+      <a *ngIf="!!this._auth.currUser" class="navbar-brand ">{{this._auth.currUser?.firstName }} {{this._auth.currUser?.lastName}} </a>
+      <a *ngIf="!!this._auth.currUser" (click)="logOut()" class="nav-link pointable">Одјави се</a>
+      <a class="nav-link pointable">
+        <div *ngIf="!!this._auth.currUser && this._auth.currUser?.access !== 'student'">
+            <div *ngIf="!!_numberOfNotifications">
+              <i  class="far fa-envelope" data-toggle="collapse" data-target="#app-notification" aria-expanded="false" aria-controls="app-notification" style="font-size: 35px" ></i>   
+              <a  class="badge badge-pill badge-danger pointable" style="color: white; vertical-align: top">{{_numberOfNotifications}}</a>       
+            </div>
+            <div *ngIf="!_numberOfNotifications">
+                <i  class="far fa-envelope-open" data-toggle="collapse" data-target="#app-notification" aria-expanded="false" aria-controls="app-notification" style="font-size: 35px"></i>
+             </div>
+        </div>
+        </a>
+    </div>
+  </div>
+  
+  <h3 class="text-center text-dark" *ngIf="!this._auth?.currUser">Евиденција на настава</h3>
+</div>
+</nav>
+<div *ngIf= "!!this._auth.currUser" class="row" style="border-bottom: lightgray .1px solid;" >
+    <div class="col">
+      <div class="collapse multi-collapse" id="app-notification" >
+        <div class="card card-body" >
+            <app-notification (numberOfNotifications)="updateNumberOfNotifications($event)" ></app-notification>
+        </div>
+      </div>
+    </div>
+  </div>
+ 

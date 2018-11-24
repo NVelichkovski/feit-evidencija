@@ -1,0 +1,42 @@
+<div class="container text-dark" style="padding: 50px">
+  
+  <button class="btn btn-info" style="margin-bottom: 20px" (click)="updateStreamingData()"> <i class="fa fa-sync"></i> Синхронизирај </button>
+
+    <div *ngIf="this.streamingData.length === 0" class="card text-dark">
+      <div class="card-header">
+        <p *ngIf="this._liveStrService.semester === 0" class="font-weight-light"> Во моментов нема предавања </p>
+        <p *ngIf="this._liveStrService.semester === 1" class="font-weight-light"> Семестерот сеуште не е почнат </p>
+        <p *ngIf="this._liveStrService.semester === 2" class="font-weight-light"> Прва колоквиумска недела. Нема предавања. </p>
+        <p *ngIf="this._liveStrService.semester === 3" class="font-weight-light"> Втора колоквиумска недела. Нема предавања. </p>    
+        <p *ngIf="this._liveStrService.semester === 4" class="font-weight-light"> Семестерот е завршен</p>
+      </div>
+    </div>
+  
+    <table *ngIf="!!streamingData.length" class="table table-sm table-hover">
+        <thead>
+          <tr>
+            <th scope="col">
+             #
+            </th>
+            <th scope="col">Просторија</th>
+            <th scope="col">Предмет</th>
+            <th scope="col">Професор по распоред</th>
+            <th scope="col">Моментално</th>
+            <th scope="col">Присутно:</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let streamData of streamingData" style="cursor: crosshair;" [ngClass]="{'table-danger': !streamData.success}">
+            <th scope="row">
+                <i *ngIf="streamData.success" class="fas fa-check-circle" style="color: seagreen"></i>
+                <i *ngIf="!streamData.success" class="fas fa-minus-circle " style="color: firebrick"></i> 
+            </th>
+            <td>{{streamData.room}}</td>
+            <td>{{streamData.subject}}</td>
+            <td>{{streamData.professor}}</td>
+            <td>{{streamData.currently}}</td>
+            <td>{{streamData.present}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+</div>

@@ -1,0 +1,33 @@
+  
+
+ <div class="container-fluid well border-0" id="login" style="padding-top: 100px;">
+        <div class="container">
+            <div id="login-row" class="row justify-content-center align-items-center">
+                <div id="login-column" class="col-md-6">
+                    <div id="login-box" class="col-md-12">
+                        <form *ngIf="!this._auth.currUser" id="login-form" #loginForm="ngForm" (ngSubmit)="login(loginForm.value)" class="form " novalidate autocomplete="off">
+                            <h3 class="text-center text-dark">Login</h3>
+                            <div class="form-group">
+                                <label for="username" class="text-dark" >Корисничко име:</label> 
+                                <span class="alert" *ngIf="loginForm.controls?.username?.invalid && loginForm.controls?.username?.dirty">Полето е задолжително</span>
+                                <br>
+                                <input (ngModel)="username" [ngClass]="{'alert': (loginForm.controls?.username?.invalid && loginForm.controls?.username?.dirty)}" type="text" name="username" id="username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="text-dark">Пасворд:</label>
+                                <span class="alert" *ngIf="loginForm.controls?.password?.invalid && loginForm.controls?.password?.dirty">Полето е задолжително</span>
+                                <br>
+                                <input (ngModel)="password" [ngClass]="{'alert': (loginForm.controls?.password?.invalid && loginForm.controls?.password?.dirty) }" type="password" name="password" id="password" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <!-- <label for="remember-me" class="text-dark"><span>Remember me</span> <span><input id="remember-me" name="remember-me" type="checkbox"></span></label><br> -->
+                                 <button type="submit" name="submit"  class="btn btn-dark btn-group-lg" [disabled]="loginForm.invalid"  >Најави се</button>
+                                 <span *ngIf="invalidCred" class="alert center align-text-top">Податоците се погрешни! Обидете се повторно</span>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
