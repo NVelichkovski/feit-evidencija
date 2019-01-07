@@ -5,7 +5,7 @@
 
     function databaseConnect ()
     {
-            $dbLink = mysqli_connect("localhost","root","","evidencija");
+            $dbLink = mysqli_connect(,,,);
                 if (mysqli_connect_errno())
                     return "Failed to connect to MySQL: " . mysqli_connect_error();
             mysqli_set_charset($dbLink, "utf8");
